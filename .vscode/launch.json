@@ -1,7 +1,6 @@
 {
     "version": "0.2.0",
-    "configurations": [
-        {
+    "configurations": [{
             // Use IntelliSense to find out which attributes exist for C# debugging
             // Use hover for the description of the existing attributes
             // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
@@ -10,9 +9,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/prject.api/bin/Debug/net5.0/prject.api.dll",
+            "program": "${workspaceFolder}/RandalsVideoStore.API/bin/Debug/net5.0/RandalsVideoStore.API.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/prject.api",
+            "cwd": "${workspaceFolder}/RandalsVideoStore.API",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {
