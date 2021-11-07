@@ -1,16 +1,25 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using OurProject.API.Models;
+using OurProject.API.Ports;
+
 
 namespace OurProject.API.Controllers
 {
+    //[Route("[controller]")]
+
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/projects")]
     public class ProjectController : ControllerBase
     {
+        private readonly IRepo _database;
 
         private readonly ILogger<ProjectController> _logger;
 
@@ -27,7 +36,7 @@ namespace OurProject.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(personName), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetUserNameById(string personName)
+        public async Task<IActionResult> GetUserNameById(string id)
         {
             try
             {
@@ -54,7 +63,7 @@ namespace OurProject.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(personMail), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetUserMailById(string personMail)
+        public async Task<IActionResult> GetUserMailById(string id)
         {
             try
             {
@@ -81,7 +90,7 @@ namespace OurProject.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(personBirth), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetUserBirthById(string personBirth)
+        public async Task<IActionResult> GetUserBirthById(string id)
         {
             try
             {
@@ -171,7 +180,7 @@ namespace OurProject.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(eventName), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetEventNameById(string eventName)
+        public async Task<IActionResult> GetEventNameById(string id)
         {
             try
             {
@@ -198,7 +207,7 @@ namespace OurProject.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(eventDate), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetEventDateById(string eventDate)
+        public async Task<IActionResult> GetEventDateById(string id)
         {
             try
             {
@@ -225,7 +234,7 @@ namespace OurProject.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(eventDescription), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetEventDescriptionById(string eventDescription)
+        public async Task<IActionResult> GetEventDescriptionById(string id)
         {
             try
             {
@@ -252,7 +261,7 @@ namespace OurProject.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(eventMinAge), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetEventMinAgeById(string eventMinAge)
+        public async Task<IActionResult> GetEventMinAgeById(int id)
         {
             try
             {
@@ -279,7 +288,7 @@ namespace OurProject.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(eventMaxAge), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetEventMaxAgeById(string eventMaxAge)
+        public async Task<IActionResult> GetEventMaxAgeById(int id)
         {
             try
             {
@@ -306,7 +315,7 @@ namespace OurProject.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(eventEnroll), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetEventEnrollById(string eventEnroll)
+        public async Task<IActionResult> GetEventEnrollById(bool id)
         {
             try
             {
@@ -333,7 +342,7 @@ namespace OurProject.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(eventEnroll), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetEventEnrollDateById(string eventEnrollDate)
+        public async Task<IActionResult> GetEventEnrollDateById(string id)
         {
             try
             {
@@ -360,7 +369,7 @@ namespace OurProject.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(eventCounter), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetEventCounterById(string eventCounter)
+        public async Task<IActionResult> GetEventCounterById(int id)
         {
             try
             {
@@ -387,7 +396,7 @@ namespace OurProject.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(eventPersonList), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetEventPersonListById(string eventPersonList)
+        public async Task<IActionResult> GetEventPersonListById(string id)
         {
             try
             {
@@ -421,7 +430,7 @@ namespace OurProject.API.Controllers
         {
             try
             {
-                var createdName = eventName.ToPerson();
+                var createdName = eventName.ToEvent();
                 var name = await _database.CreateUser(createdName);
                 return CreatedAtAction(nameof(GetById), new { id = createdName.Id.ToString() }, eventName.FromModel(name));
             }
@@ -440,7 +449,7 @@ namespace OurProject.API.Controllers
         {
             try
             {
-                var createdDate = eventDate.ToPerson();
+                var createdDate = eventDate.ToEvent();
                 var date = await _database.CreateUser(createdDate);
                 return CreatedAtAction(nameof(GetById), new { id = createdDate.Id.ToString() }, eventDate.FromModel(name));
             }
@@ -459,7 +468,7 @@ namespace OurProject.API.Controllers
         {
             try
             {
-                var createdDescription = eventDescription.ToPerson();
+                var createdDescription = eventDescription.ToEvent();
                 var description = await _database.CreateUser(createdDescription);
                 return CreatedAtAction(nameof(GetById), new { id = createdDescription.Id.ToString() }, eventDescription.FromModel(name));
             }
@@ -478,7 +487,7 @@ namespace OurProject.API.Controllers
         {
             try
             {
-                var createdMinAge = eventDescription.ToPerson();
+                var createdMinAge = eventDescription.ToEvent();
                 var minAge = await _database.CreateMinAge(createdMinAge);
                 return CreatedAtAction(nameof(GetById), new { id = createdMinAge.Id.ToString() }, eventMinAge.FromModel(name));
             }
@@ -497,7 +506,7 @@ namespace OurProject.API.Controllers
         {
             try
             {
-                var createdMaxAge = eventDescription.ToPerson();
+                var createdMaxAge = eventDescription.ToEvent();
                 var maxAge = await _database.CreateMaxAge(createdMaxAge);
                 return CreatedAtAction(nameof(GetById), new { id = createdMaxAge.Id.ToString() }, eventMaxAge.FromModel(name));
             }
@@ -516,7 +525,7 @@ namespace OurProject.API.Controllers
         {
             try
             {
-                var createdEnroll = eventEnroll.ToPerson();
+                var createdEnroll = eventEnroll.ToEvent();
                 var enroll = await _database.CreateUser(createdEnroll);
                 return CreatedAtAction(nameof(GetById), new { id = createdEnroll.Id.ToString() }, eventEnroll.FromModel(name));
             }
@@ -535,7 +544,7 @@ namespace OurProject.API.Controllers
         {
             try
             {
-                var createdEnrollDate = eventEnrollDate.ToPerson();
+                var createdEnrollDate = eventEnrollDate.ToEvent();
                 var enrollDate = await _database.CreateUser(createdEnrollDate);
                 return CreatedAtAction(nameof(GetById), new { id = createdEnrollDate.Id.ToString() }, eventEnrollDate.FromModel(name));
             }
@@ -554,7 +563,7 @@ namespace OurProject.API.Controllers
         {
             try
             {
-                var createdCounter = eventCounter.ToPerson();
+                var createdCounter = eventCounter.ToEvent();
                 var counter = await _database.CreateUser(createdCounter);
                 return CreatedAtAction(nameof(GetById), new { id = createdCounter.Id.ToString() }, eventCounter.FromModel(name));
             }
@@ -573,7 +582,7 @@ namespace OurProject.API.Controllers
         {
             try
             {
-                var createdPersonList = eventPersonList.ToPerson();
+                var createdPersonList = eventPersonList.ToEvent();
                 var personList = await _database.CreateUser(createdPersonList);
                 return CreatedAtAction(nameof(GetById), new { id = createdPersonList.Id.ToString() }, eventPersonList.FromModel(name));
             }
