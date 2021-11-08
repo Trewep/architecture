@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace OurProject.API.Ports
 {
     //fake data to test if our API works
-    public class MockRepo : IRepo
+    public class MockDatabase : IDatabase
     {
 
         //users
@@ -41,7 +41,7 @@ namespace OurProject.API.Ports
             return await _context.User.FindAsync(parsedId);
         }
 
-        public async Task<User> PersistUser(User user)
+        public async Task<User> PersistUser(User users)
         {
             if (user.Id == null)
             {
@@ -57,7 +57,7 @@ namespace OurProject.API.Ports
 
         public async Task DeleteUser(Guid parsedId)
         {
-            var user = await _context.User.FindAsync(parsedId);
+            var users = await _context.User.FindAsync(parsedId);
             _context.User.Remove(user);
             await _context.SaveChangesAsync();
         }

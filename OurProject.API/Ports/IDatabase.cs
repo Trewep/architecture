@@ -1,19 +1,19 @@
 using System;
 using System.Collections;
-using OurProject.API.Models;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using OurProject.API.Models;
 
 namespace OurProject.API.Ports
 {
-    public interface IRepo
+    public interface IDatabase
     {
         IEnumerable<User> GetAllUser();
         User GetUserById(int id);
         Task<ReadOnlyCollection<User>> GetAllUser(string titleStartsWith);
         Task<User> GetUserById(Guid id);
-        Task<User> PersistUser(User user);
+        Task<User> PersistUser(User users);
         Task DeleteUser(Guid parsedId);
 
         IEnumerable<Event> GetAllEvent();

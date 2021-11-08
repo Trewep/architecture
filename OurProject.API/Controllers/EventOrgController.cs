@@ -1,29 +1,31 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using OurProject.API.Models;
 using OurProject.API.Ports;
+using OurProject.API.Controllers;
+using AutoMapper;
 
 
 namespace OurProject.API.Controllers
 {
-    //[Route("[controller]")]
 
     [ApiController]
-    [Route("api/projects")]
-    public class ProjectController : ControllerBase
+    [Route("api/eventorgs")]
+    public class EventOrgController : ControllerBase
     {
-        private readonly IRepo _database;
+        private readonly IDatabase _database;
 
-        private readonly ILogger<ProjectController> _logger;
+        private readonly ILogger<EventOrgController> _logger;
 
-        public ProjectController(ILogger<ProjectController> logger)
+        public EventOrgController(ILogger<EventOrgController> logger)
         {
             _logger = logger;
             _database = database;
@@ -34,7 +36,7 @@ namespace OurProject.API.Controllers
 
         //username
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(personName), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ReadUser), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetUserNameById(string id)
         {
@@ -61,7 +63,7 @@ namespace OurProject.API.Controllers
 
         //email
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(personMail), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ReadUser), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetUserMailById(string id)
         {
@@ -88,7 +90,7 @@ namespace OurProject.API.Controllers
 
         //DateOfBirth
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(personBirth), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ReadUser), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetUserBirthById(string id)
         {
@@ -118,7 +120,7 @@ namespace OurProject.API.Controllers
 
         //username
         [HttpPut()]
-        [ProducesResponseType(typeof(personName), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ReadUser), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateUser(CreateUser personName)
         {
@@ -137,9 +139,9 @@ namespace OurProject.API.Controllers
 
         //email
         [HttpPut()]
-        [ProducesResponseType(typeof(personName), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ReadUser), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateMail(CreateMail personMail)
+        public async Task<IActionResult> CreateMail(CreateUser personMail)
         {
             try
             {
@@ -156,9 +158,9 @@ namespace OurProject.API.Controllers
 
         //DateOfBirth
         [HttpPut()]
-        [ProducesResponseType(typeof(personBirth), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ReadUser), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateBirth(CreateBirth personBirth)
+        public async Task<IActionResult> CreateBirth(CreateUser personBirth)
         {
             try
             {
@@ -178,7 +180,7 @@ namespace OurProject.API.Controllers
 
         //name
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(eventName), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetEventNameById(string id)
         {
@@ -205,7 +207,7 @@ namespace OurProject.API.Controllers
 
         //date
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(eventDate), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetEventDateById(string id)
         {
@@ -232,7 +234,7 @@ namespace OurProject.API.Controllers
 
         //description
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(eventDescription), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetEventDescriptionById(string id)
         {
@@ -259,7 +261,7 @@ namespace OurProject.API.Controllers
 
         //min-age
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(eventMinAge), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetEventMinAgeById(int id)
         {
@@ -286,7 +288,7 @@ namespace OurProject.API.Controllers
 
         //max-age
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(eventMaxAge), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetEventMaxAgeById(int id)
         {
@@ -313,7 +315,7 @@ namespace OurProject.API.Controllers
 
         //enroll
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(eventEnroll), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetEventEnrollById(bool id)
         {
@@ -340,7 +342,7 @@ namespace OurProject.API.Controllers
 
         //enrollDate
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(eventEnroll), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetEventEnrollDateById(string id)
         {
@@ -367,7 +369,7 @@ namespace OurProject.API.Controllers
 
         //counter
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(eventCounter), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetEventCounterById(int id)
         {
@@ -394,7 +396,7 @@ namespace OurProject.API.Controllers
 
         //personList
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(eventPersonList), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetEventPersonListById(string id)
         {
@@ -424,9 +426,9 @@ namespace OurProject.API.Controllers
 
         //name
         [HttpPut()]
-        [ProducesResponseType(typeof(eventName), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateEventName(CreateEventName eventName)
+        public async Task<IActionResult> CreateEventName(CreateEvent eventName)
         {
             try
             {
@@ -443,9 +445,9 @@ namespace OurProject.API.Controllers
 
         //date
         [HttpPut()]
-        [ProducesResponseType(typeof(eventdate), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateEventDate(CreateEventDate eventDate)
+        public async Task<IActionResult> CreateEventDate(CreateEvent eventDate)
         {
             try
             {
@@ -462,9 +464,9 @@ namespace OurProject.API.Controllers
 
         //description
         [HttpPut()]
-        [ProducesResponseType(typeof(eventDescription), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateEventDescription(CreateEventDescription eventDescription)
+        public async Task<IActionResult> CreateEventDescription(CreateEvent eventDescription)
         {
             try
             {
@@ -481,9 +483,9 @@ namespace OurProject.API.Controllers
 
         //min-age
         [HttpPut()]
-        [ProducesResponseType(typeof(eventMinAge), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateEventMinAge(CreateEventMinAge eventMinAge)
+        public async Task<IActionResult> CreateEventMinAge(CreateEvent eventMinAge)
         {
             try
             {
@@ -500,9 +502,9 @@ namespace OurProject.API.Controllers
 
         //max-age
         [HttpPut()]
-        [ProducesResponseType(typeof(eventMaxAge), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateEventMaxAge(CreateEventMaxAge eventMaxAge)
+        public async Task<IActionResult> CreateEventMaxAge(CreateEvent eventMaxAge)
         {
             try
             {
@@ -519,9 +521,9 @@ namespace OurProject.API.Controllers
 
         //enroll
         [HttpPut()]
-        [ProducesResponseType(typeof(eventEnroll), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateEventEnroll(CreateEventEnroll eventEnroll)
+        public async Task<IActionResult> CreateEventEnroll(CreateEvent eventEnroll)
         {
             try
             {
@@ -538,9 +540,9 @@ namespace OurProject.API.Controllers
 
         //enrollDate
         [HttpPut()]
-        [ProducesResponseType(typeof(eventEnrollDate), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateEventEnrollDate(CreateEventEnrollDate eventEnrollDate)
+        public async Task<IActionResult> CreateEventEnrollDate(CreateEvent eventEnrollDate)
         {
             try
             {
@@ -557,9 +559,9 @@ namespace OurProject.API.Controllers
 
         //counter
         [HttpPut()]
-        [ProducesResponseType(typeof(eventCounter), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateEventCounter(CreateEventCounter eventCounter)
+        public async Task<IActionResult> CreateEventCounter(CreateEvent eventCounter)
         {
             try
             {
@@ -576,9 +578,9 @@ namespace OurProject.API.Controllers
 
         //personList
         [HttpPut()]
-        [ProducesResponseType(typeof(eventPersonList), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateEventPersonList(CreateEventPersonList eventPersonList)
+        public async Task<IActionResult> CreateEventPersonList(CreateEvent eventPersonList)
         {
             try
             {

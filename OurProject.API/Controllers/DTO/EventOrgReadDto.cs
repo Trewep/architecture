@@ -1,14 +1,27 @@
-/*using System;
+using System;
 using OurProject.API.Models;
 
 namespace OurProject.API.Controllers
 {
-    public class controllerDTO
+    public class ReadUser
     {
+        public int Id { get; set; }
         public string personName { get; set; }
         public string personMail { get; set; }
         public string personBirth { get; set; }
 
+        public static ReadUser FromModel(User User) => new ReadUser
+        {
+            Id = user.Id.ToString(),
+            personName = user.personName,
+            personMail = user.personMail,
+            personBirth = user.personBirth,
+        };
+    }
+
+    public class ReadEvent
+    {
+        public int Id { get; set; }
         public string eventName { get; set; }
         public string eventDate { get; set; }
         public string eventDescription { get; set; }
@@ -19,6 +32,23 @@ namespace OurProject.API.Controllers
         public int eventCounter { get; set; }
         public string eventPersonList { get; set; }
 
+        public static ReadEvent FromModel(Event Event) => new ReadEvent
+        {
+            Id = Event.Id.ToString(),
+            eventName = Event.eventName,
+            eventDate = Event.eventDate,
+            eventDescription = Event.eventDescription,
+            eventMinAge = Event.eventMinAge,
+            eventMaxAge = Event.eventMaxAge,
+            eventEnroll = Event.eventEnroll,
+            eventEnrollDate = Event.eventEnrollDate,
+            eventCounter = Event.eventCounter,
+            eventPersonList = Event.eventPersonList,
+        };
+    }
+
+    /*public class ViewMovie
+    {
         public class Person ToPerson() => new Person
         {
             personName = this.personName,
@@ -38,5 +68,5 @@ namespace OurProject.API.Controllers
             eventCounter = this.eventCounter,
             eventPersonList = this.eventPersonList,
         };
-    }
-}*/
+    }*/
+}
