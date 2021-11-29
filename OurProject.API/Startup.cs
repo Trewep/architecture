@@ -1,7 +1,11 @@
+//System
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
+
+//Microsoft
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,8 +16,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
-using AutoMapper;
 
+//OurProject
+using OurProject.API.Infra;
+using OurProject.API.Ports;
+
+//Namespace
 namespace OurProject.API
 {
     public class Startup
@@ -27,12 +35,17 @@ namespace OurProject.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<EventOrgContext>(Opt => optUseSqlServer
-                (Configuration.GetConnectionString("EventOrgConnection")));
+
+
+            services.AddDbContext<OurProjectContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+
+            //services.AddDbContext<OurProjectContext>(Opt => optUseSqlServer
+            //  (Configuration.GetConnectionString("OurProjectConnection")));
+
+            services.AddTransient<IDatabase, SqlOurProjectDatabase>();
 
             services.AddControllers();
-
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddSwaggerGen(c =>
             {

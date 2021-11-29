@@ -1,5 +1,5 @@
 Our project is in the OurProject.API folder.
-Our Tests are in the TestProject folder.
+Our Tests are in the OurProject.test folder.
 
 at the moment our api isnt working 
 We type dotnet run in terminal and get an error code we couldn't yet resolve in time
