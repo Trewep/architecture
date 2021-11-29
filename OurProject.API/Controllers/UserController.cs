@@ -38,14 +38,14 @@ namespace OurProject.API.UserControllers
         [HttpGet("getAllUser")]
         [ProducesResponseType(typeof(IEnumerable<ReadUser>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<User> GetAllUser(string titleStartsWith) =>
+        public async Task<IActionResult> GetAllUser(string titleStartsWith) =>
                     Ok((await _database.GetAllUser(titleStartsWith))
                         .Select(ReadUser.FromModel).ToList());
 
         [HttpGet("getUserById/{id}")]
         [ProducesResponseType(typeof(ReadUser), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<User> GetUserById(int Id)
+        public async Task<IActionResult> GetUserById(int Id)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace OurProject.API.UserControllers
         [HttpDelete("removeUserById/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<User> DeleteById(int Id)
+        public async Task<IActionResult> DeleteById(int Id)
         {
             try
             {
@@ -96,7 +96,7 @@ namespace OurProject.API.UserControllers
         [HttpPut("addEditUser/")]
         [ProducesResponseType(typeof(ReadUser), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<User> PersistUser(CreateUser User)
+        public async Task<IActionResult> PersistUser(CreateUser User)
         {
             try
             {
