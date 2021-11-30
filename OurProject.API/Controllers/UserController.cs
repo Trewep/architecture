@@ -45,11 +45,11 @@ namespace OurProject.API.UserControllers
         [HttpGet("getUserById/{id}")]
         [ProducesResponseType(typeof(ReadUser), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetUserById(int Id)
+        public async Task<IActionResult> GetUserById(int id)
         {
             try
             {
-                var User = await _database.GetUserById(Id);
+                var User = await _database.GetUserById(id);
                 if (User != null)
                 {
                     return Ok(ReadUser.FromModel(User));
@@ -70,14 +70,14 @@ namespace OurProject.API.UserControllers
         [HttpDelete("removeUserById/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteById(int Id)
+        public async Task<IActionResult> DeleteById(int id)
         {
             try
             {
-                var User = await _database.GetUserById(Id);
+                var User = await _database.GetUserById(id);
                 if (User != null)
                 {
-                    await _database.DeleteUser(Id);
+                    await _database.DeleteUser(id);
                     return NoContent();
                 }
                 else

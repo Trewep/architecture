@@ -44,11 +44,11 @@ namespace OurProject.API.EventControllers
         [HttpGet("getEventById/{id}")]
         [ProducesResponseType(typeof(ReadEvent), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetEventById(int Id)
+        public async Task<IActionResult> GetEventById(int id)
         {
             try
             {
-                var event_ = await _database.GetEventById(Id);
+                var event_ = await _database.GetEventById(id);
                 if (event_ != null)
                 {
                     return Ok(ReadEvent.FromModel(event_));
@@ -69,14 +69,14 @@ namespace OurProject.API.EventControllers
         [HttpDelete("removeEventById/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteById(int Id)
+        public async Task<IActionResult> DeleteById(int id)
         {
             try
             {
-                var event_ = await _database.GetEventById(Id);
+                var event_ = await _database.GetEventById(id);
                 if (event_ != null)
                 {
-                    await _database.DeleteEvent(Id);
+                    await _database.DeleteEvent(id);
                     return NoContent();
                 }
                 else

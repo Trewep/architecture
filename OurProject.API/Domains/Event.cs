@@ -8,6 +8,7 @@ namespace OurProject.API.Domains
 {
     public class Event
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string eventName { get; set; }
         public string eventDate { get; set; }

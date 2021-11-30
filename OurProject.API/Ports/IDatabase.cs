@@ -23,10 +23,6 @@ namespace OurProject.API.Ports
         Task<Event> PersistEvent(Event event_);
         Task DeleteEvent(int id);
 
-
-
-
-
         /*User
         Task<ReadOnlyCollection<User>> GetAllUser(string titleStartsWith);
         Task<User> GetUserById(int id);
