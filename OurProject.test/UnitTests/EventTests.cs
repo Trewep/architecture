@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 
 //OurProject
-using OurProject.API.Controllers;
+using OurProject.API.EventControllers;
 using OurProject.API.Ports;
-using OurProject.API.Domain;
+using OurProject.API.Domains;
 
 //Xunit
 using Xunit;
@@ -20,9 +20,10 @@ using Xunit;
 //Namespace
 namespace OurProject.Test.UnitTests
 {
+
     public class EventControllerUnitTest
     {
-        //Mock is a library that allows us to fake databases and loggers
+        //Mock = Library for faking databases and loggers
         private Mock<ILogger<EventController>> _mockedLogger = new Mock<ILogger<EventController>>();
         private Mock<IDatabase> _mockedDatabase = new Mock<IDatabase>();
 
@@ -32,7 +33,7 @@ namespace OurProject.Test.UnitTests
             _mockedLogger.Reset();
         }
 
-        //All GetEventByID tests
+        //GetEventByID test
         [Fact]
         public async Task TestGetEventById_Success()
         {
@@ -43,16 +44,18 @@ namespace OurProject.Test.UnitTests
             var testEvent = new Event
             {
                 Id = testId,
-                Name = "Thomas More Student Lift off",
-                Description = "Student Lift Off",
-                MinAge = 2,
-                MaxAge = 5,
-                StartDate = Convert.ToDateTime("2018-11-05 11:38:56.307"),
-                EndDate = Convert.ToDateTime("2019-11-05 11:38:56.307")
+                eventName = "party in de bergen",
+                eventDate = "12 december 2021",
+                eventDescription = "party in de bergen voor alle medewerkers",
+                eventMinAge = 18,
+                eventMaxAge = 99,
+                eventEnroll = true,
+                eventEnrollDate = "1 december 2021",
+                eventCounter = "3",
+                eventPersonList = "Fluppe, Arthur, Dylan"
             };
-
-
-            //Call the method GetEventById to test our mocked event, no db calls
+            //Use GetEventById (METHOD) to test our mocked event
+            //NO DB USING
             _mockedDatabase.Setup(x => x.GetEventById(testId)).Returns(Task.FromResult(testEvent));
 
             //Link controller
@@ -62,25 +65,25 @@ namespace OurProject.Test.UnitTests
 
             //Check results
             Assert.Equal(200, actualResult.StatusCode);
-            var viewModel = actualResult.Value as ViewEvent;
+            var viewModel = actualResult.Value as ReadEvent;
             Assert.Equal(testEvent.Id, viewModel.Id);
-            Assert.Equal(testEvent.Name, viewModel.Name);
-            Assert.Equal(testEvent.Description, viewModel.Description);
-            Assert.Equal(testEvent.MinAge, viewModel.MinAge);
-            Assert.Equal(testEvent.MaxAge, viewModel.MaxAge);
-            Assert.Equal(testEvent.StartDate, viewModel.StartDate);
-            Assert.Equal(testEvent.EndDate, viewModel.EndDate);
-            Assert.Equal(testEvent.StreetName, viewModel.StreetName);
-            Assert.Equal(testEvent.StreetNumber, viewModel.StreetNumber);
-            Assert.Equal(testEvent.City, viewModel.City);
-            Assert.Equal(testEvent.Country, viewModel.Country);
+            Assert.Equal(testEvent.eventName, viewModel.eventName);
+            Assert.Equal(testEvent.eventDate, viewModel.eventDate);
+            Assert.Equal(testEvent.eventDescription, viewModel.eventDescription);
+            Assert.Equal(testEvent.eventMinAge, viewModel.eventMinAge);
+            Assert.Equal(testEvent.eventMaxAge, viewModel.eventMaxAge);
+            Assert.Equal(testEvent.eventEnroll, viewModel.eventEnroll);
+            Assert.Equal(testEvent.eventEnrollDate, viewModel.eventEnrollDate);
+            Assert.Equal(testEvent.eventCounter, viewModel.eventCounter);
+            Assert.Equal(testEvent.eventPersonList, viewModel.eventPersonList);
 
             _mockedLogger.VerifyAll();
             _mockedDatabase.VerifyAll();
         }
 
+        //GetAllEvents test
         [Fact]
-        public async Task TestGetEventById_DoesntExist()
+        public async Task TestGetAllEvents_Success()
         {
             var rnd = new Random();
             var testId = rnd.Next(101);
@@ -89,190 +92,134 @@ namespace OurProject.Test.UnitTests
             var testEvent = new Event
             {
                 Id = testId,
-                Name = "EpicBigFestival",
-                Description = "Festival is big epic",
-                MinAge = 2,
-                MaxAge = 5,
-                StartDate = Convert.ToDateTime("2018-11-05 11:38:56.307"),
-                EndDate = Convert.ToDateTime("2019-11-05 11:38:56.307"),
-                StreetName = "Bruul",
-                StreetNumber = 2,
-                City = "London",
-                Country = "England"
+                eventName = "party in de bergen",
+                eventDate = "12 december 2021",
+                eventDescription = "party in de bergen voor alle medewerkers",
+                eventMinAge = 18,
+                eventMaxAge = 99,
+                eventEnroll = true,
+                eventEnrollDate = "1 december 2021",
+                eventCounter = "3",
+                eventPersonList = "Fluppe, Arthur, Dylan"
             };
-
-            _mockedDatabase.Setup(x => x.GetEventById(testId)).Returns(Task.FromResult(null as Event)); //Doesn't return the found event but returns null
-
-            //Link the EventController
-            var controller = new EventController(_mockedLogger.Object, _mockedDatabase.Object);
-
-            //Check the results
-            var result = await new EventController(_mockedLogger.Object, _mockedDatabase.Object).GetEventById(testId);
-            Assert.IsType<NotFoundResult>(result);
-
-            _mockedLogger.VerifyAll();
-            _mockedDatabase.VerifyAll();
-        }
-
-        [Fact]
-        public async Task TestGetEventById_ErrorOnRetrievalAsync()
-        {
-            var rnd = new Random();
-            var testId = rnd.Next(101);
-
-            //Create mock up event
-            var testEvent = new Event
-            {
-                Id = testId,
-                Name = "EpicBigFestival",
-                Description = "Festival is big epic",
-                MinAge = 2,
-                MaxAge = 5,
-                StartDate = Convert.ToDateTime("2018-11-05 11:38:56.307"),
-                EndDate = Convert.ToDateTime("2019-11-05 11:38:56.307"),
-                StreetName = "Bruul",
-                StreetNumber = 2,
-                City = "London",
-                Country = "England"
-            };
-
-            _mockedDatabase.Setup(x => x.GetEventById(testId)).ThrowsAsync(new Exception("Cowboy Bebop"));
-
-            //Link the EventController
-            var result = await new EventController(_mockedLogger.Object, _mockedDatabase.Object).GetEventById(testId);
-
-            //Check the results
-            Assert.IsType<BadRequestObjectResult>(result);
-            _mockedLogger.VerifyAll();
-            _mockedDatabase.VerifyAll();
-        }
-
-        //All getEventByAgeRange tests
-        [Fact]
-        public async Task TestGetEventsByAgeRange_Success()
-        {
-            var minAge = 2;
-            var maxAge = 18;
-
-            var testAge = 5;
-
-            //Create mock up event
-            var testEvent = new Event
-            {
-                Id = 1,
-                Name = "EpicBigFestival",
-                Description = "Festival is big epic",
-                MinAge = minAge,
-                MaxAge = maxAge,
-                StartDate = Convert.ToDateTime("2018-11-05 11:38:56.307"),
-                EndDate = Convert.ToDateTime("2019-11-05 11:38:56.307"),
-                StreetName = "Bruul",
-                StreetNumber = 2,
-                City = "London",
-                Country = "England"
-            };
-
-
-            //Call the method GetEventsByAgeRange to test our mocked event, no db calls
-            _mockedDatabase.Setup(x => x.GetEventsByAgeRange(testAge));
+            //Use GetEventById (METHOD) to test our mocked event
+            //NO DB USING
+            _mockedDatabase.Setup(x => x.GetAllEvent(testId)).Returns(Task.FromResult(testEvent));
 
             //Link controller
             var controller = new EventController(_mockedLogger.Object, _mockedDatabase.Object);
             //Get results from the controller
-            var actualResult = await controller.GetEventsByAgeRange(testAge) as OkObjectResult;
+            var actualResult = await controller.GetAllEvent(testId) as OkObjectResult;
 
             //Check results
             Assert.Equal(200, actualResult.StatusCode);
-            //result returns an array of results not singular result, how to check if multiple results are correct *SEE BELOW*
-            //Does pass the test with 200 not with notFound or badRequest 
-
-            /*
-            var viewModel = actualResult.Value as ViewEvent;
+            var viewModel = actualResult.Value as ReadEvent;
             Assert.Equal(testEvent.Id, viewModel.Id);
-            Assert.Equal(testEvent.Name, viewModel.Name);
-            Assert.Equal(testEvent.Description, viewModel.Description);
-            Assert.Equal(testEvent.MinAge, viewModel.MinAge);
-            Assert.Equal(testEvent.MaxAge, viewModel.MaxAge);
-            Assert.Equal(testEvent.StartDate, viewModel.StartDate);
-            Assert.Equal(testEvent.EndDate, viewModel.EndDate);
-            Assert.Equal(testEvent.StreetName, viewModel.StreetName);
-            Assert.Equal(testEvent.StreetNumber, viewModel.StreetNumber);
-            Assert.Equal(testEvent.City, viewModel.City);
-            Assert.Equal(testEvent.Country, viewModel.Country);
-            */
+            Assert.Equal(testEvent.eventName, viewModel.eventName);
+            Assert.Equal(testEvent.eventDate, viewModel.eventDate);
+            Assert.Equal(testEvent.eventDescription, viewModel.eventDescription);
+            Assert.Equal(testEvent.eventMinAge, viewModel.eventMinAge);
+            Assert.Equal(testEvent.eventMaxAge, viewModel.eventMaxAge);
+            Assert.Equal(testEvent.eventEnroll, viewModel.eventEnroll);
+            Assert.Equal(testEvent.eventEnrollDate, viewModel.eventEnrollDate);
+            Assert.Equal(testEvent.eventCounter, viewModel.eventCounter);
+            Assert.Equal(testEvent.eventPersonList, viewModel.eventPersonList);
 
             _mockedLogger.VerifyAll();
             _mockedDatabase.VerifyAll();
         }
 
+        //PersistEvent test
         [Fact]
-        public async Task TestGetEventsByAgeRange_DoesntExist()
+        public async Task TestPersistEvent_Success()
         {
-            var minAge = 2;
-            var maxAge = 18;
-
-            var testAge = 5;
+            var rnd = new Random();
+            var testId = rnd.Next(101);
 
             //Create mock up event
             var testEvent = new Event
             {
                 Id = 1,
-                Name = "EpicBigFestival",
-                Description = "Festival is big epic",
-                MinAge = minAge,
-                MaxAge = maxAge,
-                StartDate = Convert.ToDateTime("2018-11-05 11:38:56.307"),
-                EndDate = Convert.ToDateTime("2019-11-05 11:38:56.307"),
-                StreetName = "Bruul",
-                StreetNumber = 2,
-                City = "London",
-                Country = "England"
+                eventName = "party in de bergen 2.0",
+                eventDate = "12 januari 2022",
+                eventDescription = "party in de bergen voor alle medewerkers maar beter en groter",
+                eventMinAge = 18,
+                eventMaxAge = 99,
+                eventEnroll = true,
+                eventEnrollDate = "28 december 2021",
+                eventCounter = "3",
+                eventPersonList = "Fluppe, Arthur, Dylan"
             };
+            //Use GetEventById (METHOD) to test our mocked event
+            //NO DB USING
+            _mockedDatabase.Setup(x => x.PersistEvent(testId)).Returns(Task.FromResult(testEvent));
 
-            _mockedDatabase.Setup(x => x.GetEventsByAgeRange(testAge)).Returns(Task.FromResult(null as Event[])); ; //Doesn't return the found event but returns null
-
-            //Link the EventController
+            //Link controller
             var controller = new EventController(_mockedLogger.Object, _mockedDatabase.Object);
+            //Get results from the controller
+            var actualResult = await controller.PersistEvent(testId) as OkObjectResult;
 
-            //Check the results
-            var result = await new EventController(_mockedLogger.Object, _mockedDatabase.Object).GetEventsByAgeRange(testAge);
-            Assert.IsType<NotFoundResult>(result);
+            //Check results
+            Assert.Equal(200, actualResult.StatusCode);
+            var viewModel = actualResult.Value as ReadEvent;
+            Assert.Equal(testEvent.Id, viewModel.Id);
+            Assert.Equal(testEvent.eventName, viewModel.eventName);
+            Assert.Equal(testEvent.eventDate, viewModel.eventDate);
+            Assert.Equal(testEvent.eventDescription, viewModel.eventDescription);
+            Assert.Equal(testEvent.eventMinAge, viewModel.eventMinAge);
+            Assert.Equal(testEvent.eventMaxAge, viewModel.eventMaxAge);
+            Assert.Equal(testEvent.eventEnroll, viewModel.eventEnroll);
+            Assert.Equal(testEvent.eventEnrollDate, viewModel.eventEnrollDate);
+            Assert.Equal(testEvent.eventCounter, viewModel.eventCounter);
+            Assert.Equal(testEvent.eventPersonList, viewModel.eventPersonList);
 
             _mockedLogger.VerifyAll();
             _mockedDatabase.VerifyAll();
         }
 
+        //DeleteEvent test
         [Fact]
-        public async Task TestGetEventsByAgeRange_ErrorOnRetrievalAsync()
+        public async Task TestDeleteEvent_Success()
         {
-            var minAge = 2;
-            var maxAge = 18;
-
-            var testAge = 5;
+            var rnd = new Random();
+            var testId = rnd.Next(101);
 
             //Create mock up event
             var testEvent = new Event
             {
                 Id = 1,
-                Name = "EpicBigFestival",
-                Description = "Festival is big epic",
-                MinAge = minAge,
-                MaxAge = maxAge,
-                StartDate = Convert.ToDateTime("2018-11-05 11:38:56.307"),
-                EndDate = Convert.ToDateTime("2019-11-05 11:38:56.307"),
-                StreetName = "Bruul",
-                StreetNumber = 2,
-                City = "London",
-                Country = "England"
+                eventName = "party in de bergen 2.0",
+                eventDate = "12 januari 2022",
+                eventDescription = "party in de bergen voor alle medewerkers maar beter en groter",
+                eventMinAge = 18,
+                eventMaxAge = 99,
+                eventEnroll = true,
+                eventEnrollDate = "28 december 2021",
+                eventCounter = "3",
+                eventPersonList = "Fluppe, Arthur, Dylan"
             };
+            //Use GetEventById (METHOD) to test our mocked event
+            //NO DB USING
+            _mockedDatabase.Setup(x => x.DeleteEvent(testId)).Returns(Task.FromResult(testEvent));
 
-            _mockedDatabase.Setup(x => x.GetEventsByAgeRange(testAge)).ThrowsAsync(new Exception("Cowboy Bebop"));
+            //Link controller
+            var controller = new EventController(_mockedLogger.Object, _mockedDatabase.Object);
+            //Get results from the controller
+            var actualResult = await controller.DeleteEvent(testId) as OkObjectResult;
 
-            //Link the EventController
-            var result = await new EventController(_mockedLogger.Object, _mockedDatabase.Object).GetEventsByAgeRange(testAge);
+            //Check results
+            Assert.Equal(200, actualResult.StatusCode);
+            var viewModel = actualResult.Value as CreateEvent;
+            Assert.Equal(testEvent.Id, viewModel.Id);
+            Assert.Equal(testEvent.eventName, viewModel.eventName);
+            Assert.Equal(testEvent.eventDate, viewModel.eventDate);
+            Assert.Equal(testEvent.eventDescription, viewModel.eventDescription);
+            Assert.Equal(testEvent.eventMinAge, viewModel.eventMinAge);
+            Assert.Equal(testEvent.eventMaxAge, viewModel.eventMaxAge);
+            Assert.Equal(testEvent.eventEnroll, viewModel.eventEnroll);
+            Assert.Equal(testEvent.eventEnrollDate, viewModel.eventEnrollDate);
+            Assert.Equal(testEvent.eventCounter, viewModel.eventCounter);
 
-            //Check the results
-            Assert.IsType<BadRequestObjectResult>(result);
             _mockedLogger.VerifyAll();
             _mockedDatabase.VerifyAll();
         }

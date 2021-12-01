@@ -11,8 +11,8 @@ using Moq;
 
 //OurProject
 using OurProject.API.Ports;
-using OurProject.API.Domain;
-using OurProject.API.Controllers;
+using OurProject.API.Domains;
+using OurProject.API.UserControllers;
 
 //Xunit
 using Xunit;
@@ -41,10 +41,9 @@ namespace OurProject.Test.UnitTests
             var testUser = new User
             {
                 Id = testId,
-                Name = "Bailey",
-                DateOfBirth = Convert.ToDateTime("1998-11-02 11:38:56.307"),
-                Mail = "bailey@lievens.be",
-                EventId = 1
+                personName = "Fluppe",
+                personBirth = "9 mei 1998",
+                personMail = "fluppevanmeerbeeck@gmail.com",
             };
 
 
@@ -58,19 +57,18 @@ namespace OurProject.Test.UnitTests
 
             //Check results
             Assert.Equal(200, actualResult.StatusCode);
-            var viewModel = actualResult.Value as ViewUser;
+            var viewModel = actualResult.Value as ReadUser;
             Assert.Equal(testUser.Id, viewModel.Id);
-            Assert.Equal(testUser.Name, viewModel.Name);
-            Assert.Equal(testUser.DateOfBirth, viewModel.DateOfBirth);
-            Assert.Equal(testUser.Mail, viewModel.Mail);
-            Assert.Equal(testUser.EventId, viewModel.EventId);
+            Assert.Equal(testUser.personName, viewModel.personName);
+            Assert.Equal(testUser.personBirth, viewModel.personBirth);
+            Assert.Equal(testUser.personMail, viewModel.personMail);
 
             _mockedLogger.VerifyAll();
             _mockedDatabase.VerifyAll();
         }
 
         [Fact]
-        public async Task TestGetUserById_DoesntExist()
+        public async Task TestGetAllUser_Success()
         {
             var rnd = new Random();
             var testId = rnd.Next(101);
@@ -79,27 +77,31 @@ namespace OurProject.Test.UnitTests
             var testUser = new User
             {
                 Id = testId,
-                Name = "Bailey",
-                DateOfBirth = Convert.ToDateTime("1998-11-02 11:38:56.307"),
-                Mail = "bailey@lievens.be",
-                EventId = 1
+                personName = "Fluppe",
+                personBirth = "9 mei 1998",
+                personMail = "fluppevanmeerbeeck@gmail.com",
             };
 
-            _mockedDatabase.Setup(x => x.GetUserById(testId)).Returns(Task.FromResult(null as User)); //Doesn't return the found event but returns null
+            _mockedDatabase.Setup(x => x.GetAllUser(testId)).Returns(Task.FromResult(testUser));
 
-            //Link the EventController
             var controller = new UserController(_mockedLogger.Object, _mockedDatabase.Object);
 
-            //Check the results
-            var result = await new UserController(_mockedLogger.Object, _mockedDatabase.Object).GetUserById(testId);
-            Assert.IsType<NotFoundResult>(result);
+            var actualResult = await controller.GetAllUser(testId) as OkObjectResult;
+
+            //Check results
+            Assert.Equal(200, actualResult.StatusCode);
+            var viewModel = actualResult.Value as ReadUser;
+            Assert.Equal(testUser.Id, viewModel.Id);
+            Assert.Equal(testUser.personName, viewModel.personName);
+            Assert.Equal(testUser.personBirth, viewModel.personBirth);
+            Assert.Equal(testUser.personMail, viewModel.personMail);
 
             _mockedLogger.VerifyAll();
             _mockedDatabase.VerifyAll();
         }
 
         [Fact]
-        public async Task TestGetUserById_ErrorOnRetrievalAsync()
+        public async Task TestPersistUser_Success()
         {
             var rnd = new Random();
             var testId = rnd.Next(101);
@@ -107,23 +109,61 @@ namespace OurProject.Test.UnitTests
             //Create mock up user
             var testUser = new User
             {
-                Id = testId,
-                Name = "Bailey",
-                DateOfBirth = Convert.ToDateTime("1998-11-02 11:38:56.307"),
-                Mail = "bailey@lievens.be",
-                EventId = 1
+                Id = 2,
+                personName = "Arthur",
+                personBirth = "12 october 2002",
+                personMail = "arthurdelophem3@gmail.com",
             };
 
-            _mockedDatabase.Setup(x => x.GetUserById(testId)).ThrowsAsync(new Exception("Cowboy Bebop"));
+            _mockedDatabase.Setup(x => x.PersistUser(testId)).Returns(Task.FromResult(testUser));
 
-            //Link the EventController
-            var result = await new UserController(_mockedLogger.Object, _mockedDatabase.Object).GetUserById(testId);
+            var controller = new UserController(_mockedLogger.Object, _mockedDatabase.Object);
 
-            //Check the results
-            Assert.IsType<BadRequestObjectResult>(result);
+            var actualResult = await controller.PersistUser(testId) as OkObjectResult;
+
+            //Check results
+            Assert.Equal(200, actualResult.StatusCode);
+            var viewModel = actualResult.Value as ReadUser;
+            Assert.Equal(testUser.Id, viewModel.Id);
+            Assert.Equal(testUser.personName, viewModel.personName);
+            Assert.Equal(testUser.personBirth, viewModel.personBirth);
+            Assert.Equal(testUser.personMail, viewModel.personMail);
+
             _mockedLogger.VerifyAll();
             _mockedDatabase.VerifyAll();
         }
 
+        [Fact]
+        public async Task TestDeleteUser_Success()
+        {
+            var rnd = new Random();
+            var testId = rnd.Next(101);
+
+            //Create mock up user
+            var testUser = new User
+            {
+                Id = 2,
+                personName = "Arthur",
+                personBirth = "12 october 2002",
+                personMail = "arthurdelophem3@gmail.com",
+            };
+
+            _mockedDatabase.Setup(x => x.DeleteUser(testId)).Returns(Task.FromResult(testUser));
+
+            var controller = new UserController(_mockedLogger.Object, _mockedDatabase.Object);
+
+            var actualResult = await controller.DeleteUser(testId) as OkObjectResult;
+
+            //Check results
+            Assert.Equal(200, actualResult.StatusCode);
+            var viewModel = actualResult.Value as ReadUser;
+            Assert.Equal(testUser.Id, viewModel.Id);
+            Assert.Equal(testUser.personName, viewModel.personName);
+            Assert.Equal(testUser.personBirth, viewModel.personBirth);
+            Assert.Equal(testUser.personMail, viewModel.personMail);
+
+            _mockedLogger.VerifyAll();
+            _mockedDatabase.VerifyAll();
+        }
     }
 }
