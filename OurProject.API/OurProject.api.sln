@@ -2,7 +2,7 @@
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api", "api\api.csproj", "{E71BBADF-4863-4E43-ADAA-36B4E7F28644}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OurProject.test", "OurProject.test\OurProject.csproj", "{E71BBADF-4863-4E43-ADAA-36B4E7F28644}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
