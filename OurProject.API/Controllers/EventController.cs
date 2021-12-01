@@ -36,7 +36,7 @@ namespace OurProject.API.EventControllers
         [HttpGet("getAllEvents")]
         [ProducesResponseType(typeof(IEnumerable<ReadEvent>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> Get(string titleStartsWith) =>
+        public async Task<IActionResult> GetAllEvents(string titleStartsWith) =>
           Ok((await _database.GetAllEvents(titleStartsWith))
               .Select(ReadEvent.FromModel).ToList());
 

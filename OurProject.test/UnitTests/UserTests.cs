@@ -10,9 +10,10 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 
 //OurProject
-using OurProject.API.Ports;
-using OurProject.API.Domains;
 using OurProject.API.UserControllers;
+using OurProject.API.Controllers;
+using OurProject.API.Domains;
+using OurProject.API.Ports;
 
 //Xunit
 using Xunit;

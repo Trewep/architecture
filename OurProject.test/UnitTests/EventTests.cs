@@ -11,8 +11,9 @@ using Moq;
 
 //OurProject
 using OurProject.API.EventControllers;
-using OurProject.API.Ports;
+using OurProject.API.Controllers;
 using OurProject.API.Domains;
+using OurProject.API.Ports;
 
 //Xunit
 using Xunit;
@@ -51,7 +52,7 @@ namespace OurProject.Test.UnitTests
                 eventMaxAge = 99,
                 eventEnroll = true,
                 eventEnrollDate = "1 december 2021",
-                eventCounter = "3",
+                eventCounter = 3,
                 eventPersonList = "Fluppe, Arthur, Dylan"
             };
             //Use GetEventById (METHOD) to test our mocked event
@@ -99,17 +100,17 @@ namespace OurProject.Test.UnitTests
                 eventMaxAge = 99,
                 eventEnroll = true,
                 eventEnrollDate = "1 december 2021",
-                eventCounter = "3",
+                eventCounter = 3,
                 eventPersonList = "Fluppe, Arthur, Dylan"
             };
             //Use GetEventById (METHOD) to test our mocked event
             //NO DB USING
-            _mockedDatabase.Setup(x => x.GetAllEvent(testId)).Returns(Task.FromResult(testEvent));
+            _mockedDatabase.Setup(x => x.GetAllEvents(testId)).Returns(Task.FromResult(testEvent));
 
             //Link controller
             var controller = new EventController(_mockedLogger.Object, _mockedDatabase.Object);
             //Get results from the controller
-            var actualResult = await controller.GetAllEvent(testId) as OkObjectResult;
+            var actualResult = await controller.GetAllEvents(testId) as OkObjectResult;
 
             //Check results
             Assert.Equal(200, actualResult.StatusCode);
@@ -147,7 +148,7 @@ namespace OurProject.Test.UnitTests
                 eventMaxAge = 99,
                 eventEnroll = true,
                 eventEnrollDate = "28 december 2021",
-                eventCounter = "3",
+                eventCounter = 3,
                 eventPersonList = "Fluppe, Arthur, Dylan"
             };
             //Use GetEventById (METHOD) to test our mocked event
@@ -195,7 +196,7 @@ namespace OurProject.Test.UnitTests
                 eventMaxAge = 99,
                 eventEnroll = true,
                 eventEnrollDate = "28 december 2021",
-                eventCounter = "3",
+                eventCounter = 3,
                 eventPersonList = "Fluppe, Arthur, Dylan"
             };
             //Use GetEventById (METHOD) to test our mocked event
