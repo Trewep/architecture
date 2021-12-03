@@ -180,7 +180,7 @@ namespace OurProject.Test.UnitTests
 
         //DeleteEvent test
         [Fact]
-        public async Task TestDeleteEvent_Success()
+        public async Task TestDeleteById_Success()
         {
             var rnd = new Random();
             var testId = rnd.Next(101);
@@ -206,7 +206,7 @@ namespace OurProject.Test.UnitTests
             //Link controller
             var controller = new EventController(_mockedLogger.Object, _mockedDatabase.Object);
             //Get results from the controller
-            var actualResult = await controller.DeleteEvent(testId) as OkObjectResult;
+            var actualResult = await controller.DeleteById(testId) as OkObjectResult;
 
             //Check results
             Assert.Equal(200, actualResult.StatusCode);

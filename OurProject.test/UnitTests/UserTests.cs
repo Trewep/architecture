@@ -48,15 +48,12 @@ namespace OurProject.Test.UnitTests
             };
 
 
-            //Call the method GetUserById to test our mocked user, no db calls
+
             _mockedDatabase.Setup(x => x.GetUserById(testId)).Returns(Task.FromResult(testUser));
 
-            //Link controller
             var controller = new UserController(_mockedLogger.Object, _mockedDatabase.Object);
-            //Get results from the controller
             var actualResult = await controller.GetUserById(testId) as OkObjectResult;
 
-            //Check results
             Assert.Equal(200, actualResult.StatusCode);
             var viewModel = actualResult.Value as ReadUser;
             Assert.Equal(testUser.Id, viewModel.Id);
@@ -135,7 +132,7 @@ namespace OurProject.Test.UnitTests
         }
 
         [Fact]
-        public async Task TestDeleteUser_Success()
+        public async Task TestDeleteById_Success()
         {
             var rnd = new Random();
             var testId = rnd.Next(101);
@@ -153,7 +150,7 @@ namespace OurProject.Test.UnitTests
 
             var controller = new UserController(_mockedLogger.Object, _mockedDatabase.Object);
 
-            var actualResult = await controller.DeleteUser(testId) as OkObjectResult;
+            var actualResult = await controller.DeleteById(testId) as OkObjectResult;
 
             //Check results
             Assert.Equal(200, actualResult.StatusCode);
