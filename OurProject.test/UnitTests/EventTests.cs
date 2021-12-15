@@ -105,17 +105,18 @@ namespace OurProject.Test.UnitTests
             };
             //Use GetEventById (METHOD) to test our mocked event
             //NO DB USING
-            _mockedDatabase.Setup(x => x.GetAllEvents(testId)).Returns(Task.FromResult(testEvent));
+            Event[] testEventArray = { testEvent };
+            _mockedDatabase.Setup(x => x.GetAllEvents(testId.ToString())).Returns(Task.FromResult(Array.AsReadOnly(testEventArray)));
 
             //Link controller
             var controller = new EventController(_mockedLogger.Object, _mockedDatabase.Object);
             //Get results from the controller
-            var actualResult = await controller.GetAllEvents(testId) as OkObjectResult;
+            var actualResult = await controller.GetAllEvents(testId.ToString()) as OkObjectResult;
 
             //Check results
             Assert.Equal(200, actualResult.StatusCode);
             var viewModel = actualResult.Value as ReadEvent;
-            Assert.Equal(testEvent.Id, viewModel.Id);
+            Assert.Equal(testEvent.Id, viewModel.Id); //Foutmelding
             Assert.Equal(testEvent.eventName, viewModel.eventName);
             Assert.Equal(testEvent.eventDate, viewModel.eventDate);
             Assert.Equal(testEvent.eventDescription, viewModel.eventDescription);
@@ -151,17 +152,31 @@ namespace OurProject.Test.UnitTests
                 eventCounter = 3,
                 eventPersonList = "Fluppe, Arthur, Dylan"
             };
+
+            var testCreateEvent = new CreateEvent
+            {
+                Id = 1,
+                eventName = "party in de bergen 2.0",
+                eventDate = "12 januari 2022",
+                eventDescription = "party in de bergen voor alle medewerkers maar beter en groter",
+                eventMinAge = 18,
+                eventMaxAge = 99,
+                eventEnroll = true,
+                eventEnrollDate = "28 december 2021",
+                eventCounter = 3,
+                eventPersonList = "Fluppe, Arthur, Dylan"
+            };
             //Use GetEventById (METHOD) to test our mocked event
             //NO DB USING
-            _mockedDatabase.Setup(x => x.PersistEvent(testId)).Returns(Task.FromResult(testEvent));
+            _mockedDatabase.Setup(x => x.PersistEvent(testEvent)).Returns(Task.FromResult(testEvent));
 
             //Link controller
             var controller = new EventController(_mockedLogger.Object, _mockedDatabase.Object);
             //Get results from the controller
-            var actualResult = await controller.PersistEvent(testId) as OkObjectResult;
+            var actualResult = await controller.PersistEvent(testCreateEvent) as OkObjectResult;
 
             //Check results
-            Assert.Equal(200, actualResult.StatusCode);
+            Assert.Equal(200, actualResult.StatusCode); //Foutmelding
             var viewModel = actualResult.Value as ReadEvent;
             Assert.Equal(testEvent.Id, viewModel.Id);
             Assert.Equal(testEvent.eventName, viewModel.eventName);
@@ -209,7 +224,7 @@ namespace OurProject.Test.UnitTests
             var actualResult = await controller.DeleteById(testId) as OkObjectResult;
 
             //Check results
-            Assert.Equal(200, actualResult.StatusCode);
+            Assert.Equal(200, actualResult.StatusCode); //Foutmelding
             var viewModel = actualResult.Value as CreateEvent;
             Assert.Equal(testEvent.Id, viewModel.Id);
             Assert.Equal(testEvent.eventName, viewModel.eventName);
