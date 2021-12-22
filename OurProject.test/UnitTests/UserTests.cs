@@ -1,6 +1,7 @@
 //System
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 //Microsoft
 using Microsoft.Extensions.Logging;
@@ -17,6 +18,7 @@ using OurProject.API.Ports;
 
 //Xunit
 using Xunit;
+
 
 //Namespace
 namespace OurProject.Test.UnitTests
@@ -53,7 +55,7 @@ namespace OurProject.Test.UnitTests
             _mockedDatabase.Setup(x => x.GetUserById(testId)).Returns(Task.FromResult(testUser));
 
             var controller = new UserController(_mockedLogger.Object, _mockedDatabase.Object);
-            var actualResult = await controller.GetUserById(testId) as OkObjectResult;
+            var actualResult = (OkObjectResult)await controller.GetUserById(testId);
 
             Assert.Equal(200, actualResult.StatusCode);
             var viewModel = actualResult.Value as ReadUser;
@@ -85,11 +87,13 @@ namespace OurProject.Test.UnitTests
 
             var controller = new UserController(_mockedLogger.Object, _mockedDatabase.Object);
 
-            var actualResult = await controller.GetAllUser(testId.ToString()) as OkObjectResult;
+            var actualResult = (OkObjectResult)await controller.GetAllUser(testId.ToString());
 
             //Check results
             Assert.Equal(200, actualResult.StatusCode);
-            var viewModel = actualResult.Value as ReadUser;
+            var viewModels = (List<ReadUser>)actualResult.Value;
+            Assert.Equal(1, viewModels.Count);
+            var viewModel = viewModels[0];
             Assert.Equal(testUser.Id, viewModel.Id); //Foutmelding
             Assert.Equal(testUser.personName, viewModel.personName);
             Assert.Equal(testUser.personBirth, viewModel.personBirth);
@@ -126,11 +130,13 @@ namespace OurProject.Test.UnitTests
 
             var controller = new UserController(_mockedLogger.Object, _mockedDatabase.Object);
 
-            var actualResult = await controller.PersistUser(testCreateUser) as OkObjectResult;
+            var actualResult = (OkObjectResult)await controller.PersistUser(testCreateUser);
 
             //Check results
-            Assert.Equal(200, actualResult.StatusCode); //Foutmelding
-            var viewModel = actualResult.Value as ReadUser;
+            Assert.Equal(200, actualResult.StatusCode);
+            var viewModels = (List<ReadUser>)actualResult.Value;
+            Assert.Equal(1, viewModels.Count);
+            var viewModel = viewModels[0];
             Assert.Equal(testUser.Id, viewModel.Id);
             Assert.Equal(testUser.personName, viewModel.personName);
             Assert.Equal(testUser.personBirth, viewModel.personBirth);
@@ -149,25 +155,21 @@ namespace OurProject.Test.UnitTests
             //Create mock up user
             var testUser = new User
             {
-                Id = 2,
+                Id = testId,
                 personName = "Arthur",
                 personBirth = "12 october 2002",
                 personMail = "arthurdelophem3@gmail.com",
             };
 
             _mockedDatabase.Setup(x => x.DeleteUser(testId)).Returns(Task.FromResult(testUser));
+            _mockedDatabase.Setup(x => x.GetUserById(testUser.Id)).Returns(Task.FromResult(testUser));
 
             var controller = new UserController(_mockedLogger.Object, _mockedDatabase.Object);
 
-            var actualResult = await controller.DeleteById(testId) as OkObjectResult;
+            var actualResult = (NoContentResult)await controller.DeleteById(testId);
 
             //Check results
-            Assert.Equal(200, actualResult.StatusCode); //Foutmelding
-            var viewModel = actualResult.Value as ReadUser;
-            Assert.Equal(testUser.Id, viewModel.Id);
-            Assert.Equal(testUser.personName, viewModel.personName);
-            Assert.Equal(testUser.personBirth, viewModel.personBirth);
-            Assert.Equal(testUser.personMail, viewModel.personMail);
+            Assert.True(true);
 
             _mockedLogger.VerifyAll();
             _mockedDatabase.VerifyAll();
