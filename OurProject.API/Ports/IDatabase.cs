@@ -22,17 +22,5 @@ namespace OurProject.API.Ports
         Task<Event> GetEventById(int id);
         Task<Event> PersistEvent(Event event_);
         Task DeleteEvent(int id);
-
-        /*User
-        Task<ReadOnlyCollection<User>> GetAllUser(string titleStartsWith);
-        Task<User> GetUserById(int id);
-        Task<User> PersistUser(User users);
-        Task DeleteUser(int parsedId);
-
-        //Event
-        Task<Event> GetEventById(int id);
-        Task<ReadOnlyCollection<Event>> GetAllEvent(string titleStartsWith);
-        Task<Event> PersistEvent(Event events);
-        Task DeleteEvent(int parsedId);*/
     }
 }

@@ -36,7 +36,6 @@ namespace OurProject.API
         public void ConfigureServices(IServiceCollection services)
         {
 
-
             services.AddDbContext<OurProjectContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 

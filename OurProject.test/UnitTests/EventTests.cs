@@ -1,8 +1,3 @@
-//System
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-
 //Microsoft
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
@@ -16,20 +11,22 @@ using OurProject.API.Controllers;
 using OurProject.API.Domains;
 using OurProject.API.Ports;
 
+//System
+using System;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
 //Xunit
 using Xunit;
-
 
 //Namespace
 namespace OurProject.Test.UnitTests
 {
-
     public class EventControllerUnitTest
     {
         //Mock = Library for faking databases and loggers
         private Mock<ILogger<EventController>> _mockedLogger = new Mock<ILogger<EventController>>();
         private Mock<IDatabase> _mockedDatabase = new Mock<IDatabase>();
-
         public EventControllerUnitTest()
         {
             _mockedDatabase.Reset();
@@ -42,7 +39,6 @@ namespace OurProject.Test.UnitTests
         {
             var rnd = new Random();
             var testId = rnd.Next(101);
-
             //Create mock up event
             var testEvent = new Event
             {
@@ -60,12 +56,10 @@ namespace OurProject.Test.UnitTests
             //Use GetEventById (METHOD) to test our mocked event
             //NO DB USING
             _mockedDatabase.Setup(x => x.GetEventById(testId)).Returns(Task.FromResult(testEvent));
-
             //Link controller
             var controller = new EventController(_mockedLogger.Object, _mockedDatabase.Object);
             //Get results from the controller
             var actualResult = (OkObjectResult)await controller.GetEventById(testId);
-
             //Check results
             Assert.Equal(200, actualResult.StatusCode);
             var viewModel = actualResult.Value as ReadEvent;
@@ -90,7 +84,6 @@ namespace OurProject.Test.UnitTests
         {
             var rnd = new Random();
             var testId = rnd.Next(101);
-
             //Create mock up event
             var testEvent = new Event
             {
@@ -109,17 +102,14 @@ namespace OurProject.Test.UnitTests
             //NO DB USING
             Event[] testEventArray = { testEvent };
             _mockedDatabase.Setup(x => x.GetAllEvents(testId.ToString())).Returns(Task.FromResult(Array.AsReadOnly(testEventArray)));
-
             //Link controller
             var controller = new EventController(_mockedLogger.Object, _mockedDatabase.Object);
             //Get results from the controller
             var actualResult = (OkObjectResult)await controller.GetAllEvents(testId.ToString());
-
             //Check results
             Assert.Equal(200, actualResult.StatusCode);
             var viewModels = (List<ReadEvent>)actualResult.Value;
-
-            Assert.Equal(1, viewModels.Count);
+            Assert.Single(viewModels);
             var viewModel = viewModels[0];
             Assert.Equal(testEvent.Id, viewModel.Id);
             Assert.Equal(testEvent.eventName, viewModel.eventName);
@@ -142,7 +132,6 @@ namespace OurProject.Test.UnitTests
         {
             var rnd = new Random();
             var testId = rnd.Next(101);
-
             //Create mock up event
             var testEvent = new Event
             {
@@ -157,7 +146,6 @@ namespace OurProject.Test.UnitTests
                 eventCounter = 3,
                 eventPersonList = "Fluppe, Arthur, Dylan"
             };
-
             var testCreateEvent = new CreateEvent
             {
                 Id = testId,
@@ -179,16 +167,12 @@ namespace OurProject.Test.UnitTests
             var controller = new EventController(_mockedLogger.Object, _mockedDatabase.Object);
             //Get results from the controller
             var actualResult = (CreatedAtActionResult)await controller.PersistEvent(testCreateEvent);
-
             //Check results
-
             Assert.True(true);
-
 
             _mockedLogger.VerifyAll();
             _mockedDatabase.VerifyAll();
         }
-
 
         //DeleteEvent test
         [Fact]
@@ -196,7 +180,6 @@ namespace OurProject.Test.UnitTests
         {
             var rnd = new Random();
             var testId = rnd.Next(101);
-
             //Create mock up event
             var testEvent = new Event
             {
@@ -215,12 +198,10 @@ namespace OurProject.Test.UnitTests
             //NO DB USING
             _mockedDatabase.Setup(x => x.DeleteEvent(testId)).Returns(Task.FromResult(testEvent));
             _mockedDatabase.Setup(x => x.GetEventById(testEvent.Id)).Returns(Task.FromResult(testEvent));
-
             //Link controller
             var controller = new EventController(_mockedLogger.Object, _mockedDatabase.Object);
             //Get results from the controller
             var actualResult = (NoContentResult)await controller.DeleteById(testId);
-
             //Check results
             Assert.True(true);
 

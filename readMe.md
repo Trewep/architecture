@@ -32,5 +32,4 @@ Our API consists of 2 endpoints (users and events), where multiple actions are a
 - a ports folder chich contains a the database interface
 
 ## todo:
-- Solution/tests
 - thorough check of the API on it's consistancy and links to be sure it remains runable without any (unexpected) problems

@@ -19,22 +19,18 @@ using OurProject.API.Ports;
 //Xunit
 using Xunit;
 
-
 //Namespace
 namespace OurProject.Test.UnitTests
 {
     public class UserControllerUnitTest
     {
-
         private Mock<ILogger<UserController>> _mockedLogger = new Mock<ILogger<UserController>>();
         private Mock<IDatabase> _mockedDatabase = new Mock<IDatabase>();
-
         public UserControllerUnitTest()
         {
             _mockedDatabase.Reset();
             _mockedLogger.Reset();
         }
-
         [Fact]
         public async Task TestGetUserById_Success()
         {
@@ -92,9 +88,9 @@ namespace OurProject.Test.UnitTests
             //Check results
             Assert.Equal(200, actualResult.StatusCode);
             var viewModels = (List<ReadUser>)actualResult.Value;
-            Assert.Equal(1, viewModels.Count);
+            Assert.Single(viewModels);
             var viewModel = viewModels[0];
-            Assert.Equal(testUser.Id, viewModel.Id); //Foutmelding
+            Assert.Equal(testUser.Id, viewModel.Id);
             Assert.Equal(testUser.personName, viewModel.personName);
             Assert.Equal(testUser.personBirth, viewModel.personBirth);
             Assert.Equal(testUser.personMail, viewModel.personMail);
