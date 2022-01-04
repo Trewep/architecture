@@ -26,15 +26,14 @@ namespace OurProject.API.UserControllers
     public class UserController : ControllerBase
     {
         private readonly IDatabase _database;
-
         private readonly ILogger<UserController> _logger;
-
         public UserController(ILogger<UserController> logger, IDatabase database)
         {
             _logger = logger;
             _database = database;
         }
 
+        //Get request for all users
         [HttpGet("getAllUser")]
         [ProducesResponseType(typeof(IEnumerable<ReadUser>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -42,6 +41,7 @@ namespace OurProject.API.UserControllers
                     Ok((await _database.GetAllUser(titleStartsWith))
                         .Select(ReadUser.FromModel).ToList());
 
+        //Get request for user based on id
         [HttpGet("getUserById/{id}")]
         [ProducesResponseType(typeof(ReadUser), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

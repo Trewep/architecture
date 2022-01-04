@@ -457,4 +457,5 @@ $RECYCLE.BIN/
 ##
 ##sqlite file
 ##
+/OurProject.API/architecture-ourproject.sqlite
 /OurProject.API/imd-OurProject-dev.sqlite
